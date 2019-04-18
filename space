@@ -1,0 +1,5 @@
+#!/bin/bash
+IFS=$'\n'
+for file in `ls -a | sed 's/ /\\ /'`; do
+    du -sh $file
+done
