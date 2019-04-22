@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ -f /usr/bin/geoiplookup ]; then
+    GEOIPLOOKUP=/usr/bin/geoiplookup
+else
+    if [ $# -gt 1 ]; then
+        GEOIPLOOKUP=$2
+    else
+        echo "please install geoiplookup or supply its location as the second arg"
+        exit
+    fi
+fi
+IFS=$'\n'
+for LINE in `traceroute -n $1`; do 
+    if [[ $LINE == traceroute* || ! $LINE == *ms* ]]; then
+        echo $LINE
+    else
+        IP=`printf "%s\n" $LINE | awk '{print $2}'`
+        LOCATION=`$GEOIPLOOKUP $IP | cut -d: -f 2`
+        echo "${LOCATION} - $LINE"
+    fi
+done
